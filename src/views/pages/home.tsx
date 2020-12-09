@@ -5,6 +5,7 @@ type menu={
     title:string,
     url?:string,
     icon:string,
+    color:string,
     component?: React.Component
 }
 
@@ -12,11 +13,13 @@ class Home extends React.Component<RouteComponentProps>{
     
     private menuList:Array<menu>=[{
         title:"docker",
-        icon:"icon-Docker",
-        url:"/docker"
+        icon:"icon-docker",
+        url:"/docker",
+        color:"#2196f3"
     },{
         title:"限制应用",
-        icon:"icon-xianzhixiaofeiling"
+        icon:"icon-xianzhixiaofeiling",
+        color:"#4caf50"
     }]
 
     constructor(props:RouteComponentProps){
@@ -27,17 +30,14 @@ class Home extends React.Component<RouteComponentProps>{
         return this.menuList.map((item)=>{
             let className:string=`iconfont ${item.icon} menu-icon`
             let click:()=>void=()=>{
-                console.log("???",item.url)
                 if(item.url){
                     this.props.history.push(item.url)
-                    console.log(this.props.history)
                 }
-                
             }
             return (
                 <div key={item.icon+'_menu'} onClick={click} className="flex-item menu-item">
-                    <span className={className}></span>
-                    <p>{item.title}</p>
+                    <span className={className} style={{"color":item.color}}></span>
+                    <p className="menu-title">{item.title}</p>
                 </div>
             )
         })

@@ -4,22 +4,26 @@ import ReactDOM from 'react-dom';
 import './iconfont.css';
 import './app.less';
 import Home from "./pages/home"
-import Docker from "./pages/docker"
+import Docker from "./pages/docker/index"
+import BrowserBtn from "./pages/browserBtn"
 
 ReactDOM.render(
-    <App />
-,
+  <App />,
   document.getElementById('root')
 );
 
 function App() {
   return (
-    <div>
+    <div >
+      <BrowserBtn/>
       <BrowserRouter>
-      <Switch>
-        <Route path="/docker" component={Docker} exact={true} />
-        <Route path="/" component={Home} />
-      </Switch>
+      <div id="app">
+        <Switch >
+          <Route path="/docker" component={Docker} exact={true} />
+          <Route path="/" component={Home} />
+        </Switch>
+      </div>
+      
       </BrowserRouter>
     </div>
   );

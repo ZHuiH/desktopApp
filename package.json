@@ -2,8 +2,8 @@
   "main": "./public/main.js",
   "private": true,
   "scripts": {
-    "dev": "./node_modules/.bin/webpack --devtool inline-source-map && tsc && ./node_modules/.bin/electron .",
-    "build": "./node_modules/.bin/webpack && tsc && ./node_modules/.bin/electron ."
+    "dev": "tsc &&  ./node_modules/.bin/webpack --devtool inline-source-map && ./node_modules/.bin/electron .",
+    "build": "tsc &&  ./node_modules/.bin/webpack && ./node_modules/.bin/electron ."
   },
   "dependencies": {
     "@types/electron": "^1.6.10",

@@ -1,35 +1,41 @@
 import {env} from "./env"
 import child from "child_process"
+import shellMap from "./shell/index"
 
-function getCommand(command:string):string{
-    //只有window的命令需要转换
-    if(env.getPlatform()=="win32"){
-        switch(command){
-            case 'ls':command="dir";break;
+class Exce implements ipcMainHandle{
+
+    public getCommand(command:string):commandHanle |null {
+        if(shellMap.hasOwnProperty(command)){
+            if(env.getPlatform()=="win32"){
+                return shellMap[command].win32
+            }
+            return shellMap[command].darwin
         }
+        return null
     }
-    return command
-}
-
-class Exce{
     /**
      * run 运行命令
      */
-    public run(command:string,...args:Array<string>):Promise<string> {
-        let arg=""
-        args.forEach(item=>{
+    public run(data:any):Promise<string> {
+        let arg="";
+        (data.args as Array<string>).forEach(item=>{
             arg+=item=" "
         })
+        let shell=this.getCommand(data.command)
         return new Promise((resolve:any,reject)=>{
-            let cmd=`${env.getBash()} ${getCommand(command)} ${arg}`;
-            console.log(cmd)
-            child.exec(cmd,(err, sto)=>{
-                if(err){
+            if(shell){
+                let cmd=`${env.getBash()} ${shell.getShell()} ${arg}`;
+                //执行代码
+                child.exec(cmd,(err, sto)=>{
+                    if(!err){
+                        resolve((shell as commandHanle).handle(sto))
+                        return
+                    }
                     reject()
-                    return
-                }
-                resolve(sto)
-            })
+                })
+                return
+            }
+            reject()
         })
     }
 }
