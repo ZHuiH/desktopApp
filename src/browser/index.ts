@@ -8,12 +8,12 @@ export namespace window {
     
     export function create(filePath:string){
         instance = new BrowserWindow({
-            width: 800,
-            height: 600,
+            width: 1200,
+            height: 800,
             webPreferences: {
                 nodeIntegration: true
             },
-            frame:false
+            //frame:false
         })
         instance.loadFile(filePath)
     }

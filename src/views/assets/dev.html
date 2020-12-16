@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+
+    window.randomStr=(len)=>{
+      let chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';  
+      let result="";
+      　for (i = 0; i < len; i++) {
+        result += chars.charAt(Math.floor((Math.random()*10) * result.length));
+  　　}
+      return result;
+    }
+
+    window.runCommand=function(command,...args){
+      return new Promise((resolve,reject)=>{
+        let data=[]
+        for(let i=0;i<8;i++){
+          data.push({
+            "key":Math.random(),
+            "CONTAINER ID": window.randomStr(8),
+            "IMAGE": window.randomStr(8),
+            "COMMAND": "bash",
+            "CREATED": (new Date).toDateString(),
+            "STATUS": (Math.random()*10) >=4 ? 'Up' : "Exit",
+            "PORTS": (Math.random()*10) >=4 ? '80/tcp' : "0.0.0.0:80->80/tcp",
+            "NAMES": window.randomStr(8),
+            "REPOSITORY": window.randomStr(8),
+            "TAG": "last",
+            "SIZE": `${Math.random * 100}MB`,
+            "IMAGE ID": window.randomStr(8),
+          })
+        }
+        resolve(data)
+      })
+    }
+  </script>
+</head>
+  <body>
+      <div id="root"></div>
+  </body>
+</html>

@@ -19,12 +19,12 @@ class Exce implements ipcMainHandle{
     public run(data:any):Promise<string> {
         let arg="";
         (data.args as Array<string>).forEach(item=>{
-            arg+=item=" "
+            arg+=item+" "
         })
         let shell=this.getCommand(data.command)
         return new Promise((resolve:any,reject)=>{
             if(shell){
-                let cmd=`${env.getBash()} ${shell.getShell()} ${arg}`;
+                let cmd=`${shell.getShell()} ${arg}`;
                 //执行代码
                 child.exec(cmd,(err, sto)=>{
                     if(!err){

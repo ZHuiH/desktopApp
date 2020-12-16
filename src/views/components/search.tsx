@@ -17,7 +17,6 @@ class Search extends React.Component<seachProps,seachState>{
         this.state={searchValue:""}
     }
     private toSearch() {
-        console.log('search',this.state.searchValue)
         if(this.props.search){
             this.props.search(this.state.searchValue)
         }

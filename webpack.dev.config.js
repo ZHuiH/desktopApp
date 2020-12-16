@@ -8,7 +8,8 @@ module.exports={
         app:"./src/views/app.tsx"
     },
     output:{
-        filename:"[name].js",
+        filename:"app.js",
+        publicPath:"/",
         path:path.resolve(__dirname,'./public/views/')
     },
     resolve:{
@@ -30,11 +31,18 @@ module.exports={
             }
         ]
     },
+    devServer:{
+        open:false,
+        contentBase:path.join(__dirname,'public/views'),
+        compress: true,
+        port: 9012,
+        hot: true
+    },
     plugins:[
         new HtmlWebpackPlugin({
             filename:"index.html",
             inject:true,
-            template:"./src/views/assets/app.html"
+            template:"./src/views/assets/dev.html"
         })
     ]
 }

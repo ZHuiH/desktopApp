@@ -2,14 +2,17 @@
   "main": "./public/main.js",
   "private": true,
   "scripts": {
-    "dev": "tsc &&  ./node_modules/.bin/webpack --devtool inline-source-map && ./node_modules/.bin/electron .",
-    "build": "tsc &&  ./node_modules/.bin/webpack && ./node_modules/.bin/electron ."
+    "dev2": "tsc &&  ./node_modules/.bin/webpack --devtool source-map && ./node_modules/.bin/electron .",
+    "d": "./node_modules/.bin/webpack serve  --config ./webpack.dev.config.js --mode development",
+    "dev": "tsc &&  ./node_modules/.bin/webpack && ./node_modules/.bin/electron ."
   },
   "dependencies": {
+    "@types/antd": "^1.0.0",
     "@types/electron": "^1.6.10",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/react-router-dom": "^5.1.6",
+    "antd": "^4.9.3",
     "css-loader": "^5.0.1",
     "electron": "^12.0.0-beta.6",
     "html-webpack-plugin": "^4.5.0",
@@ -24,5 +27,7 @@
     "webpack": "^5.10.0",
     "webpack-cli": "^4.2.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "webpack-dev-server": "^3.11.0"
+  }
 }
