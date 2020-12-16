@@ -68,8 +68,6 @@
     "./src/**/*"
   ],
   "exclude": [
-    "./src/views/pages/*",
-    "./src/views/components/*",
-    "./src/views/app.tsx"
+    "./src/views/**/*.tsx",
   ]
 }

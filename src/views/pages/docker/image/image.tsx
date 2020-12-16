@@ -31,12 +31,12 @@ class DockerImage extends React.Component<imagesInfo,any>{
         if(this.props.content.length >0){
             return (
                 <Table  dataSource={this.props.content}>
-                    <Table.Column title="名称" dataIndex="REPOSITORY"/>
-                    <Table.Column title="标签" dataIndex="TAG"/>
-                    <Table.Column title="镜像id" dataIndex="IMAGE ID"/>
-                    <Table.Column title="大小" dataIndex="SIZE"/>
-                    <Table.Column title="创建时间" dataIndex="CREATED"/>
-                    <Table.Column title="操作" key="action" render={this.options}/>
+                    <Table.Column title="名称" dataIndex="REPOSITORY" align="center"/>
+                    <Table.Column title="标签" dataIndex="TAG" align="center"/>
+                    <Table.Column title="镜像id" dataIndex="IMAGE ID" align="center"/>
+                    <Table.Column title="大小" dataIndex="SIZE" align="center"/>
+                    <Table.Column title="创建时间" dataIndex="CREATED" align="center"/>
+                    <Table.Column title="操作" key="action" render={this.options} align="center"/>
                 </Table>
             );
         }

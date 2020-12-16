@@ -28,10 +28,15 @@
             "STATUS": (Math.random()*10) >=4 ? 'Up' : "Exit",
             "PORTS": (Math.random()*10) >=4 ? '80/tcp' : "0.0.0.0:80->80/tcp",
             "NAMES": window.randomStr(8),
+            "NAME": window.randomStr(8),
             "REPOSITORY": window.randomStr(8),
             "TAG": "last",
             "SIZE": `${Math.random * 100}MB`,
             "IMAGE ID": window.randomStr(8),
+            "DESCRIPTION": window.randomStr(16),
+            "STARS":Math.floor((Math.random()*100)),
+            "OFFICIAL":(Math.random()*10) >=4 ? '[ok]' : "",
+            "AUTOMATED":(Math.random()*10) >=4 ? '[ok]' : "",
           })
         }
         resolve(data)

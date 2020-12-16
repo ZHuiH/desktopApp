@@ -32,11 +32,14 @@ module.exports={
         ]
     },
     devServer:{
-        open:false,
+        open:true,
         contentBase:path.join(__dirname,'public/views'),
         compress: true,
         port: 9012,
-        hot: true
+        hot: true,
+        historyApiFallback: true,
+        inline: true,
+        progress:true
     },
     plugins:[
         new HtmlWebpackPlugin({

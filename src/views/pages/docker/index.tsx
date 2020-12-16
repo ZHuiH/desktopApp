@@ -15,6 +15,8 @@ enum tabKey{
 type dockerState={
     container:Array<{[name:string]:string}>
     image:Array<{[name:string]:string}>
+    searchImages:Array<{[name:string]:string}>
+    searchLoad:boolean
     tabActive:tabKey,
     imageSearch:string
 }
@@ -24,9 +26,11 @@ class Docker extends React.Component<any,dockerState>{
         super(props)
         this.state={
             container:[],
+            searchImages:[],
             image:[],
             tabActive:tabKey.image,
             imageSearch:"",
+            searchLoad:false,
         }
         this.getimage()
         this.getContainer()
@@ -45,23 +49,28 @@ class Docker extends React.Component<any,dockerState>{
             this.setState({container:res})
         })
     }
-
-    private tabChange(activeKey: string) {
-        this.setState({tabActive:activeKey as tabKey})
+    
+    private searchImages(name:string) {
+        this.setState({searchLoad:true,tabActive:tabKey.search})
+        window.runCommand('docker','search',name).then(res=>{
+            console.log('search',res)
+            this.setState({searchImages:res,searchLoad:false})
+        })
     }
 
-    private imageSearch(data:string) {
-        this.setState({imageSearch:data})
+    private tabChange(activeKey: string):void {
+        this.setState({tabActive:activeKey as tabKey})
     }
 
     private topBar():JSX.Element {
         let element:JSX.Element=<span></span>
         switch(this.state.tabActive){
+            case tabKey.search:
             case tabKey.image:
                 element=<Search 
                             addonAfter="icon-sousuo" 
                             addonBefore="icon-rongqifuwuContainerServi" 
-                            search={(s)=>this.imageSearch(s)} 
+                            search={(s)=>this.searchImages(s)} 
                             placeholder="搜索镜像"
                         />
                 break;
@@ -77,10 +86,10 @@ class Docker extends React.Component<any,dockerState>{
         return(
             <div>
                 <Back afterElement={this.topBar()}/>
-                <Tabs size="large"  type="card" defaultActiveKey={tabKey.image} onChange={()=>this.tabChange}>
+                <Tabs size="large"  type="card" activeKey={this.state.tabActive} onTabClick={(activeKey: string, e:any)=>this.tabChange(activeKey)}>
 
                     <Tabs.TabPane tab="镜像搜索" key={tabKey.search}>
-                        <DockerImagesSearch search={this.state.imageSearch}/>
+                        <DockerImagesSearch reaload={this.state.searchLoad} content={this.state.searchImages}/>
                     </Tabs.TabPane>
 
                     <Tabs.TabPane tab="镜像" key={tabKey.image}>

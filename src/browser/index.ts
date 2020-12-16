@@ -3,7 +3,8 @@ import {BrowserWindow ,Menu} from "electron"
 export namespace window {
     export let instance:BrowserWindow|null=null
     export function appInit(){
-        create(__dirname+'/../views/index.html')
+        let filePath=__dirname+'/../views/index.html'
+        create(filePath)
     }
     
     export function create(filePath:string){
