@@ -28,19 +28,16 @@ class DockerImage extends React.Component<imagesInfo,any>{
      * render
      */
     public render() {
-        if(this.props.content.length >0){
-            return (
-                <Table  dataSource={this.props.content}>
-                    <Table.Column title="名称" dataIndex="REPOSITORY" align="center"/>
-                    <Table.Column title="标签" dataIndex="TAG" align="center"/>
-                    <Table.Column title="镜像id" dataIndex="IMAGE ID" align="center"/>
-                    <Table.Column title="大小" dataIndex="SIZE" align="center"/>
-                    <Table.Column title="创建时间" dataIndex="CREATED" align="center"/>
-                    <Table.Column title="操作" key="action" render={this.options} align="center"/>
-                </Table>
-            );
-        }
-        return <Empty/>
+        return (
+            <Table  dataSource={this.props.content} locale={{emptyText:"暂无数据"}}>
+                <Table.Column title="名称" dataIndex="REPOSITORY" align="center"/>
+                <Table.Column title="标签" dataIndex="TAG" align="center"/>
+                <Table.Column title="镜像id" dataIndex="IMAGE ID" align="center"/>
+                <Table.Column title="大小" dataIndex="SIZE" align="center"/>
+                <Table.Column title="创建时间" dataIndex="CREATED" align="center"/>
+                <Table.Column title="操作" key="action" render={this.options} align="center"/>
+            </Table>
+        );
     }
 }
 

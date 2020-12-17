@@ -51,21 +51,18 @@ class DockerContainer extends React.Component<containerInfo,any>{
      * render
      */
     public render() {
-        if(this.props.content.length >0){
-            return(
-                <Table  dataSource={this.props.content}>
-                    <Table.Column title="容器id" dataIndex="CONTAINER ID" align="center" />
-                    <Table.Column title="镜像" dataIndex="IMAGE" align="center"/>
-                    <Table.Column title="运行命令" dataIndex="COMMAND" align="center"/>
-                    <Table.Column title="创建时间" dataIndex="CREATED" align="center"/>
-                    <Table.Column title="状态" dataIndex="STATUS" render={this.status} align="center"/>
-                    <Table.Column title="端口" dataIndex="PORTS" render={this.port} align="center"/>
-                    <Table.Column title="名称" dataIndex="NAMES"/>
-                    <Table.Column title="操作" key="action" render={this.options} align="center"/>
-                </Table>
-            )
-        }
-        return <Empty/>
+        return(
+            <Table  dataSource={this.props.content} locale={{emptyText:"暂无数据"}}>
+                <Table.Column title="容器id" dataIndex="CONTAINER ID" align="center" />
+                <Table.Column title="镜像" dataIndex="IMAGE" align="center"/>
+                <Table.Column title="运行命令" dataIndex="COMMAND" align="center"/>
+                <Table.Column title="创建时间" dataIndex="CREATED" align="center"/>
+                <Table.Column title="状态" dataIndex="STATUS" render={this.status} align="center"/>
+                <Table.Column title="端口" dataIndex="PORTS" render={this.port} align="center"/>
+                <Table.Column title="名称" dataIndex="NAMES"/>
+                <Table.Column title="操作" key="action" render={this.options} align="center"/>
+            </Table>
+        )
     }
 }
 

@@ -36,7 +36,10 @@
             "DESCRIPTION": window.randomStr(16),
             "STARS":Math.floor((Math.random()*100)),
             "OFFICIAL":(Math.random()*10) >=4 ? '[ok]' : "",
-            "AUTOMATED":(Math.random()*10) >=4 ? '[ok]' : "",
+            "DRIVER": "bridge",
+            "NAME":window.randomStr(16),
+            "NETWORK ID":window.randomStr(16),
+            "SCOPE":'local',
           })
         }
         resolve(data)
