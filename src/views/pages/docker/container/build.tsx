@@ -1,45 +1,45 @@
 import React from "react"
 import Back from "../../../components/back"
-import{RouteComponentProps} from "react-router-dom"
-import {Row,Col,Switch,Button,Form,Input,Select,Space,message} from 'antd'
+import { RouteComponentProps } from "react-router-dom"
+import { Row, Col, Switch, Button, Form, Input, Select, Space, message } from 'antd'
 import store from "../../../store/index"
 
-type dockerBuildState={
-    tty:boolean
-    daemon:boolean
-    dockerCompose:boolean
-    name:string
-    execute:boolean
+type dockerBuildState = {
+    tty: boolean
+    daemon: boolean
+    dockerCompose: boolean
+    name: string
+    execute: boolean
 }
-type dockerBuildParam ={
-    id:string
-    tag:string
-    name:string
+type dockerBuildParam = {
+    id: string
+    tag: string
+    name: string
 }
 
-interface dockerBuildProps extends RouteComponentProps<any,any,dockerBuildParam>{}
+interface dockerBuildProps extends RouteComponentProps<any, any, dockerBuildParam> { }
 
-class Build extends React.Component<dockerBuildProps,dockerBuildState>{
-    private store=store.getState()
-    constructor(props:dockerBuildProps){
+class Build extends React.Component<dockerBuildProps, dockerBuildState>{
+    private store = store.getState()
+    constructor(props: dockerBuildProps) {
         super(props)
-        this.state={
-            tty:false,
-            execute:false,
-            daemon:true,
-            dockerCompose:false,
-            name:""
+        this.state = {
+            tty: false,
+            execute: false,
+            daemon: true,
+            dockerCompose: false,
+            name: ""
         }
     }
     //常用的端口列表
     private portList() {
-        let ports=[
-            {val:80,title:'80 (http(s))'},
-            {val:3306,title:'3306 (mysql)'},
-            {val:6379,title:'6379 (redis)'},
-            {val:27017,title:'27017 (mongo)'},
-            ]
-        return ports.map((item,index)=>{
+        let ports = [
+            { val: 80, title: '80 (http(s))' },
+            { val: 3306, title: '3306 (mysql)' },
+            { val: 6379, title: '6379 (redis)' },
+            { val: 27017, title: '27017 (mongo)' },
+        ]
+        return ports.map((item, index) => {
             return (
                 <Select.Option value={item.val} key={index}>
                     {item.title}
@@ -48,9 +48,9 @@ class Build extends React.Component<dockerBuildProps,dockerBuildState>{
         })
     }
     //已有的容器列表
-    private linkList():Array<JSX.Element> {
-        let containerList= this.store.container ? this.store.container :[]
-        return containerList.map((item,index)=>{
+    private linkList(): Array<JSX.Element> {
+        let containerList = this.store.container ? this.store.container : []
+        return containerList.map((item, index) => {
             return (
                 <Select.Option value={item.name} key={index}>
                     {item.name}
@@ -59,8 +59,8 @@ class Build extends React.Component<dockerBuildProps,dockerBuildState>{
         })
     }
 
-    private volumeList(fields:Array<any>, { add, remove }:any) {
-        let list= fields.map((field,index)=>{
+    private volumeList(fields: Array<any>, { add, remove }: any) {
+        let list = fields.map((field, index) => {
             return (
                 <Space key={index} size="large"  >
                     <Form.Item {...field} label="容器目录映射" name={[field.name, 'local']}>
@@ -72,70 +72,70 @@ class Build extends React.Component<dockerBuildProps,dockerBuildState>{
                     </Form.Item>
 
                     <Form.Item {...field}  >
-                        <span className="icon-shanchu iconfont remove-volume" onClick={()=>remove(field.name)}/>
+                        <span className="icon-shanchu iconfont remove-volume" onClick={() => remove(field.name)} />
                     </Form.Item>
                 </Space>
-                
+
             )
         })
         return (
             <>
                 {list}
                 <Form.Item>
-                    <Button onClick={()=>add()}>添加目录映射</Button>
+                    <Button onClick={() => add()}>添加目录映射</Button>
                 </Form.Item>
             </>
         )
     }
 
-    private goBack=()=>this.props.history.goBack();
+    private goBack = () => this.props.history.push('/docker');
 
-    private hanleLink(links:Array<string>):string {
-        links=links ? links :[]
-        let data= links.map(item=>{
+    private hanleLink(links: Array<string>): string {
+        links = links ? links : []
+        let data = links.map(item => {
             return `--link ${item}:${item}`
         })
-        return data.join(' ') +' ';
+        return data.join(' ') + ' ';
     }
 
-    private hanleProts(prots:Array<string>):string {
-        prots=prots ? prots :[]
-        let data= prots.map(item=>{
+    private hanleProts(prots: Array<string>): string {
+        prots = prots ? prots : []
+        let data = prots.map(item => {
             return `-p  0.0.0.0:${item}:${item}`
         })
-        return data.join(' ') +' ';
+        return data.join(' ') + ' ';
     }
 
-    private hanleVolume(volumes:Array<{local:string,remote:string}>):string {
-        volumes=volumes? volumes :[]
-        let data= volumes.map(item=>{
+    private hanleVolume(volumes: Array<{ local: string, remote: string }>): string {
+        volumes = volumes ? volumes : []
+        let data = volumes.map(item => {
             return `-v ${item.local}:${item.remote}`
         })
-        return data.join(' ') +' ';
+        return data.join(' ') + ' ';
     }
 
     private handleSwitch() {
-        let restule="";
-        this.state.tty ? restule+=`it` : ""
-        this.state.daemon ? restule+=`d` : ""
-        if(restule){
-            restule=` -${restule} `
+        let restule = "";
+        this.state.tty ? restule += `it` : ""
+        this.state.daemon ? restule += `d` : ""
+        if (restule) {
+            restule = ` -${restule} `
         }
         return restule
     }
 
-    private submit(values:any) {
-        let index=message.loading('Action in progress..', 0);
-        this.setState({execute:true})
-        let command="";
-        command+=this.hanleProts(values.prots)
-        command+=this.hanleLink(values.link)
-        command+=this.hanleVolume(values.volumes)
-        command+=this.handleSwitch()
-        values.name ? command+=`--name ${values.name} ` : ""
-        let image=`${this.props.location.state.name}:${this.props.location.state.tag}`
-        window.runCommand('docker',command,image).then(res=>{
-            this.setState({execute:false})
+    private submit(values: any) {
+        let index = message.loading('Action in progress..', 0);
+        this.setState({ execute: true })
+        let command = "";
+        command += this.hanleProts(values.prots)
+        command += this.hanleLink(values.link)
+        command += this.hanleVolume(values.volumes)
+        command += this.handleSwitch()
+        values.name ? command += `--name ${values.name} ` : ""
+        let image = `${this.props.location.state.name}:${this.props.location.state.tag}`
+        window.runCommand('docker', command, image).then(res => {
+            this.setState({ execute: false })
         })
     }
     /**
@@ -146,17 +146,17 @@ class Build extends React.Component<dockerBuildProps,dockerBuildState>{
             <>
                 <Back title="后退" />
                 <div className="docker-build-content">
-                    <Form onFinish={values=>this.submit(values)}>  
+                    <Form onFinish={values => this.submit(values)}>
                         {/* 输入框 */}
                         <Row>
                             <Col span={10}>
                                 <Form.Item label="使用镜像" required className="form-input">
-                                    <Input bordered={false} disabled={true} value={this.props.location.state.name}/>
+                                    <Input bordered={false} disabled={true} value={this.props.location.state.name} />
                                 </Form.Item>
                             </Col>
                             <Col span={10} offset={4}>
                                 <Form.Item label="设置别称" name="name" className="form-input">
-                                    <Input bordered={false} value={this.state.name}/>
+                                    <Input bordered={false} value={this.state.name} />
                                 </Form.Item>
                             </Col>
                         </Row>
@@ -181,44 +181,44 @@ class Build extends React.Component<dockerBuildProps,dockerBuildState>{
                         <Row>
                             <Col span={6}>
                                 <Form.Item label="tty" name="tty">
-                                <Switch 
-                                    checked={this.state.tty}
-                                    onChange={()=>this.setState({tty:!this.state.tty})}
-                                    checkedChildren="开启" 
-                                    unCheckedChildren="关闭"/>
+                                    <Switch
+                                        checked={this.state.tty}
+                                        onChange={() => this.setState({ tty: !this.state.tty })}
+                                        checkedChildren="开启"
+                                        unCheckedChildren="关闭" />
                                 </Form.Item>
                             </Col>
 
                             <Col span={6} offset={3}>
                                 <Form.Item label="daemon" name="daemon">
-                                    <Switch 
-                                    checked={this.state.daemon}
-                                    onChange={()=>this.setState({daemon:!this.state.daemon})}
-                                    checkedChildren="开启" 
-                                    unCheckedChildren="关闭"/>
+                                    <Switch
+                                        checked={this.state.daemon}
+                                        onChange={() => this.setState({ daemon: !this.state.daemon })}
+                                        checkedChildren="开启"
+                                        unCheckedChildren="关闭" />
                                 </Form.Item>
                             </Col>
 
                             <Col span={6} offset={3}>
                                 <Form.Item label="dockerCompose" name="dockerCompose">
-                                    <Switch 
-                                    checked={this.state.dockerCompose}
-                                    onChange={()=>this.setState({dockerCompose:!this.state.dockerCompose})}
-                                    checkedChildren="保存" 
-                                    unCheckedChildren="取消"/>
+                                    <Switch
+                                        checked={this.state.dockerCompose}
+                                        onChange={() => this.setState({ dockerCompose: !this.state.dockerCompose })}
+                                        checkedChildren="保存"
+                                        unCheckedChildren="取消" />
                                 </Form.Item>
                             </Col>
                         </Row>
-                        <Form.List name="volumes" children={this.volumeList}/>
+                        <Form.List name="volumes" children={this.volumeList} />
                         {/* 按钮 */}
                         <Row justify="center">
                             <Col span={6}>
                                 <Form.Item>
-                                    <Button type="primary" shape="round"  size="large"  block htmlType="submit" loading={this.state.execute} > 运 行 </Button>
+                                    <Button type="primary" shape="round" size="large" block htmlType="submit" loading={this.state.execute} > 运 行 </Button>
                                 </Form.Item>
                             </Col>
                             <Col span={6} offset={6}>
-                                <Button type="ghost" shape="round"  size="large"  block onClick={this.goBack}> 返 回 </Button>
+                                <Button type="ghost" shape="round" size="large" block onClick={this.goBack}> 返 回 </Button>
                             </Col>
                         </Row>
                     </Form>
