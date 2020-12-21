@@ -16,6 +16,7 @@
     }
 
     window.runCommand=function(command,...args){
+      console.log('command:'+command+' '+args.join(' '))
       return new Promise((resolve,reject)=>{
         let data=[]
         for(let i=0;i<8;i++){
@@ -31,7 +32,7 @@
             "NAME": window.randomStr(8),
             "REPOSITORY": window.randomStr(8),
             "TAG": "last",
-            "SIZE": `${Math.random * 100}MB`,
+            "SIZE": `${(Math.random() * 120).toFixed(1)}MB`,
             "IMAGE ID": window.randomStr(8),
             "DESCRIPTION": window.randomStr(16),
             "STARS":Math.floor((Math.random()*100)),

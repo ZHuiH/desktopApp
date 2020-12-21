@@ -1,21 +1,50 @@
 import React from "react"
-import {Tag,Table,Tooltip} from "antd"
+import {Tag,Table,Tooltip,Spin} from "antd"
 
 type imageSearch={
     reaload:boolean
     content:Array<{[name:string]:string}>
 }
 
-class DockerImagesSearch extends React.Component<imageSearch>{
+type imageSearchState={
+    pull:Set<string>
+    exist:Set<string>
+}
+
+class DockerImagesSearch extends React.Component<imageSearch,imageSearchState>{
     constructor(props:imageSearch){
         super(props)
+        this.state={
+            pull:new Set,
+            exist:new Set
+        }
     }
 
-    private options() {
+    private pullImage(name:string) {
+        this.state.pull.add(name)
+        this.setState({pull:this.state.pull})
+        window.runCommand('docker','pull',name).then(res=>{
+            this.state.pull.delete(name)
+            this.state.exist.add(name)
+            this.setState({pull:this.state.pull,exist:this.state.exist})
+        })
+    }
+
+    private options(record: any) {
+        let title="添加镜像"
+        let element=<span  className="icon-tianjia iconfont edit" onClick={()=>this.pullImage(record['NAME'])}/>;
+        if(this.state.pull.has(record['NAME'])){
+            element=<Spin/>;
+            title="镜像拉取中"
+        }else if(this.state.exist.has(record['NAME'])){
+            element=<span className="icon-rongqifuwuContainerServi iconfont reload" />;
+            title="镜像已拉取"
+        }
+
         return (
             <div className="options">
-                <Tooltip title="添加镜像">
-                    <span  className="icon-tianjia iconfont edit"/>
+                <Tooltip title={title}>
+                    {element}
                 </Tooltip>
             </div>
         )
@@ -39,7 +68,7 @@ class DockerImagesSearch extends React.Component<imageSearch>{
                 <Table.Column title="start" dataIndex="STARS" align="center"/>
                 <Table.Column title="official" dataIndex="OFFICIAL" align="center" render={this.whether}/>
                 <Table.Column title="automated" dataIndex="AUTOMATED" align="center" render={this.whether}/>
-                <Table.Column title="操作" key="action" render={this.options} align="center"/>
+                <Table.Column title="操作" key="action" render={(value: any, record: any)=>this.options(record)} align="center"/>
             </Table>
         )
         // if(this.props.search){

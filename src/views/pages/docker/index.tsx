@@ -46,6 +46,7 @@ class Docker extends React.Component<any,dockerState>{
      * 获取镜像
      */
     private getimage() {
+        //this.setState({image:[]})
         window.runCommand('docker','images').then(res=>{
             store.dispatch(save('image', res.map((item:any)=>{
                 return {
@@ -62,6 +63,7 @@ class Docker extends React.Component<any,dockerState>{
      * 获取容器列表
      */
     private getContainer() {
+        //this.setState({container:[]})
         window.runCommand('docker','ps','-a').then(res=>{
             store.dispatch(save('container', res.map((item:any)=>{
                 return {
@@ -80,6 +82,7 @@ class Docker extends React.Component<any,dockerState>{
      * 获取网络列表
      */
     private getnetwork() {
+        //this.setState({network:[]})
         window.runCommand('docker','network','ls').then(res=>{
             store.dispatch(save('network', res.map((item:any)=>{
                 return({
@@ -140,11 +143,11 @@ class Docker extends React.Component<any,dockerState>{
                     </Tabs.TabPane>
 
                     <Tabs.TabPane tab="镜像" key={tabKey.image}>
-                        <DockerImage content={this.state.image}/>
+                        <DockerImage content={this.state.image} reload={()=>this.getimage()}/>
                     </Tabs.TabPane>
 
                     <Tabs.TabPane tab="容器" key={tabKey.container}>
-                        <DockerContainer content={this.state.container}/>
+                        <DockerContainer content={this.state.container} reload={()=>this.getContainer()}/>
                     </Tabs.TabPane>
 
                     <Tabs.TabPane tab="网络" key={tabKey.network}>

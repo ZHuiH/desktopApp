@@ -1,25 +1,72 @@
 
 import React from "react"
-import {Empty,Table,Tooltip,Tag} from "antd"
+import {Table,Tooltip,Tag,Spin} from "antd"
 
 type containerInfo={
     content:Array<{[name:string]:string}>
+    reload:()=>void
 }
 
-class DockerContainer extends React.Component<containerInfo,any>{
+type containerState={
+    deleting:Set<string>
+    restart:Set<string>
+    stop:Set<string>
+}
 
-    private options(text:any, record :any) {
-        let action=<span style={{marginRight:"5px"}} className="icon-tingzhi iconfont stop"/>
+class DockerContainer extends React.Component<containerInfo,containerState>{
+
+    constructor(props:containerInfo){
+        super(props)
+        this.state={
+            deleting:new Set,
+            stop:new Set,
+            restart:new Set
+        }
+    }
+
+    private delete(id:string) {
+        this.state.deleting.add(id)
+        this.setState({deleting:this.state.deleting})
+        window.runCommand('docker','rm',id).then(res=>{
+            this.props.reload()
+        })
+    }
+
+    private restart(id:string) {
+        this.state.restart.add(id)
+        this.setState({restart:this.state.restart})
+        window.runCommand('docker',id,'restart').then(res=>{
+            this.props.reload()
+        })
+    }
+
+    private stop(id:string) {
+        this.state.stop.add(id)
+        this.setState({stop:this.state.stop})
+        window.runCommand('docker',id,'stop').then(res=>{
+            this.props.reload()
+        })
+    }
+
+    private options(record :any) {
+        let id=record['CONTAINER ID']
+        let action=<span className="icon-tingzhi iconfont stop" onClick={()=>this.stop(id)}/>
         let title="停止容器"
-        if(!text['STATUS'].includes('Up')){
+        if(!record['STATUS'].includes('Up')){
             title="重启重启"
-            action=<span style={{marginRight:"5px"}} className="icon-zhongqi iconfont reload"/>
+            action=<span  className="icon-zhongqi iconfont reload" onClick={()=>this.restart(id)}/>
+        }
+        let deleteTitle="删除容器"
+        let deleteIcon=<span className="icon-shanchu iconfont delete" onClick={()=>this.delete(id)}/>
+        if(this.state.deleting.has(id)){
+            deleteTitle="删除中"
+            deleteIcon=<Spin/>;
         }
         return (
             <div className="options">
                 <Tooltip title={title}>{action}</Tooltip>
-                <Tooltip title="删除容器">
-                    <span  className="icon-shanchu iconfont delete"/>
+                <Tooltip title={deleteTitle}>
+                    {deleteIcon}
                 </Tooltip>
             </div>
         )
@@ -60,7 +107,7 @@ class DockerContainer extends React.Component<containerInfo,any>{
                 <Table.Column title="状态" dataIndex="STATUS" render={this.status} align="center"/>
                 <Table.Column title="端口" dataIndex="PORTS" render={this.port} align="center"/>
                 <Table.Column title="名称" dataIndex="NAMES"/>
-                <Table.Column title="操作" key="action" render={this.options} align="center"/>
+                <Table.Column title="操作" key="action" render={(text:any, record :any)=>this.options(record)} align="center"/>
             </Table>
         )
     }

@@ -1,7 +1,7 @@
 import React from "react"
 import Back from "../../../components/back"
 import{RouteComponentProps} from "react-router-dom"
-import {Row,Col,Switch,Button,Form,Input,Select,Space} from 'antd'
+import {Row,Col,Switch,Button,Form,Input,Select,Space,message} from 'antd'
 import store from "../../../store/index"
 
 type dockerBuildState={
@@ -9,6 +9,7 @@ type dockerBuildState={
     daemon:boolean
     dockerCompose:boolean
     name:string
+    execute:boolean
 }
 type dockerBuildParam ={
     id:string
@@ -16,10 +17,7 @@ type dockerBuildParam ={
     name:string
 }
 
-
-interface dockerBuildProps extends RouteComponentProps<any,any,dockerBuildParam>{
-    
-}
+interface dockerBuildProps extends RouteComponentProps<any,any,dockerBuildParam>{}
 
 class Build extends React.Component<dockerBuildProps,dockerBuildState>{
     private store=store.getState()
@@ -27,6 +25,7 @@ class Build extends React.Component<dockerBuildProps,dockerBuildState>{
         super(props)
         this.state={
             tty:false,
+            execute:false,
             daemon:true,
             dockerCompose:false,
             name:""
@@ -126,21 +125,25 @@ class Build extends React.Component<dockerBuildProps,dockerBuildState>{
     }
 
     private submit(values:any) {
-        let command="docker run ";
+        let index=message.loading('Action in progress..', 0);
+        this.setState({execute:true})
+        let command="";
         command+=this.hanleProts(values.prots)
         command+=this.hanleLink(values.link)
         command+=this.hanleVolume(values.volumes)
         command+=this.handleSwitch()
         values.name ? command+=`--name ${values.name} ` : ""
-        command+=`${this.props.location.state.name}:${this.props.location.state.tag}`
-        console.log(command)
+        let image=`${this.props.location.state.name}:${this.props.location.state.tag}`
+        window.runCommand('docker',command,image).then(res=>{
+            this.setState({execute:false})
+        })
     }
     /**
      * render
      */
     public render() {
         return (
-            <div>
+            <>
                 <Back title="后退" />
                 <div className="docker-build-content">
                     <Form onFinish={values=>this.submit(values)}>  
@@ -211,7 +214,7 @@ class Build extends React.Component<dockerBuildProps,dockerBuildState>{
                         <Row justify="center">
                             <Col span={6}>
                                 <Form.Item>
-                                    <Button type="primary" shape="round"  size="large"  block htmlType="submit" > 运 行 </Button>
+                                    <Button type="primary" shape="round"  size="large"  block htmlType="submit" loading={this.state.execute} > 运 行 </Button>
                                 </Form.Item>
                             </Col>
                             <Col span={6} offset={6}>
@@ -220,7 +223,7 @@ class Build extends React.Component<dockerBuildProps,dockerBuildState>{
                         </Row>
                     </Form>
                 </div>
-            </div>
+            </>
         )
     }
 }
