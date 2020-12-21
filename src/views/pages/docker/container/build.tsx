@@ -125,7 +125,6 @@ class Build extends React.Component<dockerBuildProps, dockerBuildState>{
     }
 
     private submit(values: any) {
-        let index = message.loading('Action in progress..', 0);
         this.setState({ execute: true })
         let command = "";
         command += this.hanleProts(values.prots)
